@@ -1,0 +1,23 @@
+influx_data:
+  image: busybox
+  volumes:
+    - ./data/influxdb:/data
+
+influxdb:
+  image: tutum/influxdb:0.9
+  restart: always
+  ports:
+    - "8083:8083"
+    - "8086:8086"
+  volumes_from:
+    - influx_data
+
+chronograf:
+  image: lukasmartinelli/chronograf:latest
+  restart: always
+  links:
+    - influxdb:influxdb
+  ports:
+    - "10000:10000"
+  environment:
+    - INFLUXDB_HOST=influxdb
